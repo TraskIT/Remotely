@@ -24,25 +24,26 @@ Subreddit: https://www.reddit.com/r/remotely_app/
 
 ![image](https://user-images.githubusercontent.com/20995508/113913261-f7002a00-9790-11eb-81b3-c36fb8aa536d.png)
 
+## WARNING:
+Remotely is undergoing a major overhaul for its server installation process.  There will be some instability for a short time, and the documentation below may not reflect the current state.  It's recommended that you use the installation scripts from the latest full release if you don't wish to participate in testing.
 
 ## Disclaimer
 Hosting a Remotely server requires running an ASP.NET Core web app behind IIS (Windows), Nginx (Ubuntu), or Caddy Server (any OS).  It's expected that the person deploying and maintaining the server is familiar with this process.  Since this is a hobby project that I develop in between working full time and raising a family, there simply isn't time available to provide support in this capacity.
 
-## Build Instructions
+## GitHub Actions
 GitHub Actions allows you to build and deploy Remotely for free from their cloud servers.  Since the Windows agent can only be built on Windows, and the Mac agent can only be built on Mac, using a build platform like GitHub Actions or Azure Pipelines is the only reasonable way to build the whole project.  The definitions for the build processes are located in `/.github/workflows/` folder.
 
-I've created a cross-platform command line tool that will leverage the GitHub Actions REST API to build the project and install it on your private server.  This process will also embed your server's URL into the clients, so that they won't need to prompt the end user to enter it.
+I've created a cross-platform command line tool that can leverage the GitHub Actions REST API to build the project and install it on your private server.  This process will also embed your server's URL into the desktop clients, so that they won't need to prompt the end user to enter it.
 
-### Instructions for using the Remotely_Server_Installer CLI tool:
+## Installation Instructions:
+- You can find the `Remotely_Server_Installer[.exe]` CLI tool on the [Releases page](https://github.com/lucent-sea/Remotely/releases).
+  - You will download and run it on the server where you'll be hosting Remotely.
+  - You can choose between installing the pre-built release package, or entering GitHub credentials to build and install a customized server.
+  - The pre-built package will not have your server's URL embedded in the clients.  End users will need to enter it manually.
+- If you use the pre-built package, you're done!  Otherwise, follow the below steps for using the GitHub Actions integration.
 - Fork the repo if you haven't already.
 - Go to the Actions tab in your forked repo and make sure you can see the Build workflows.
   - Before you can use Actions for the first time, there will be prompt that you must accept on this page.
-- If you've already forked the repo, you need to keep your repo updated with mine.  This doesn't happen automatically.
-  - This can be done via the command line if you've cloned your repo locally.  Refer to [GitHub's docs](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork) on how to do this.  Otherwise, see below for how to do it completely through the GitHub website.
-  - On the GitHub page for your repo, you'll see a message that says, "This branch is ## commits behind lucent-sea:master".
-  - Click the "Pull request" link next to it.
-  - On the next page, click the "switching the base" link.  Now it's pulling from my repo into yours.
-  - Create and complete the pull request to update your repo.
 - Create a Personal Access Token that the installer will use to authorize with GitHub.
   - Located here: https://github.com/settings/tokens
   - It needs to have the `repo` scope.
@@ -206,12 +207,22 @@ A shortcut to this page is placed in the `\Program Files\Remotely\` folder.  You
 
 ## Shortcut Keys
 There are a few shortcut keys available when using the console.
-* / : Slash will open the autocomplete for selecting the current command mode.  The names are configurable in the Account - Options page.
+* / : Slash will allow you to switch between shells.  The names are configurable in the Options page.
 * Up/Down: Use arrow up/down to cycle through input history.
-* Ctrl + Up/Down: Scroll the console output window.
 * Ctrl + Q: Clear the output window.
-* Esc: Close the autocomplete window.
 
+## Port Configuration
+You can change the local port that the Remotely .NET server listens on by adding the below to `appsettings.Production.json`:
+
+```
+"Kestrel": {
+    "Endpoints": {
+      "Http": {
+        "Url": "http://127.0.0.1:{port-number}"
+      }
+    }
+  }
+```
 
 ## API and Integrations
 Remotely has a basic API, which can be browsed at https://app.remotely.one/swagger (or your own server instance).  Most endpoints require authentication via an API access token, which can be created by going to Account - API Access.
